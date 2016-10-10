@@ -187,7 +187,7 @@ Player.prototype.update = function(time) {
     this.angle += time * 0.005;
   }
   if(this.steerRight) {
-    this.angle -= 0.1;
+    this.angle -= time * 0.005;
   }
   // Apply acceleration
   if(this.thrusting) {
@@ -195,12 +195,14 @@ Player.prototype.update = function(time) {
       x: Math.sin(this.angle),
       y: Math.cos(this.angle)
     }
-    this.velocity.x -= acceleration.x;
-    this.velocity.y -= acceleration.y;
+    this.velocity.x -= acceleration.x / 3;
+    this.velocity.y -= acceleration.y / 3;
   }
+
   // Apply velocity
-  this.position.x += this.velocity.x;
-  this.position.y += this.velocity.y;
+  this.position.x += this.velocity.x / 3;
+  this.position.y += this.velocity.y / 3;
+
   // Wrap around the screen
   if(this.position.x < 0) this.position.x += this.worldWidth;
   if(this.position.x > this.worldWidth) this.position.x -= this.worldWidth;
