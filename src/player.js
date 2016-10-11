@@ -66,8 +66,6 @@ function Player(position, canvas) {
   }
 }
 
-
-
 /**
  * @function updates the player object
  * {DOMHighResTimeStamp} time the elapsed time since the last frame
@@ -86,19 +84,22 @@ Player.prototype.update = function(time) {
       x: Math.sin(this.angle),
       y: Math.cos(this.angle)
     }
-    this.velocity.x -= acceleration.x / 3;
-    this.velocity.y -= acceleration.y / 3;
+    this.velocity.x -= acceleration.x / 4;
+    this.velocity.y -= acceleration.y / 4;
   }
 
   // Apply velocity
-  this.position.x += this.velocity.x / 3;
-  this.position.y += this.velocity.y / 3;
+  this.position.x += this.velocity.x / 4;
+  this.position.y += this.velocity.y / 4;
 
   // Wrap around the screen
   if(this.position.x < 0) this.position.x += this.worldWidth;
   if(this.position.x > this.worldWidth) this.position.x -= this.worldWidth;
   if(this.position.y < 0) this.position.y += this.worldHeight;
   if(this.position.y > this.worldHeight) this.position.y -= this.worldHeight;
+
+  this.color = "#995EEA";
+
 }
 
 /**
@@ -107,6 +108,9 @@ Player.prototype.update = function(time) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 Player.prototype.render = function(time, ctx) {
+  ctx.strokeStyle = this.color;
+  ctx.strokeRect(this.position.x, this.position.y, this.radius, this.radius);
+
   ctx.save();
 
   // Draw player's ship
@@ -132,4 +136,6 @@ Player.prototype.render = function(time, ctx) {
     ctx.stroke();
   }
   ctx.restore();
+
+
 }
