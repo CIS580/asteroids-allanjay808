@@ -25,7 +25,6 @@ function Player(position, canvas) {
     y: 0
   }
   this.angle = 0;
-  this.radius  = 64;
   this.thrusting = false;
   this.steerLeft = false;
   this.steerRight = false;
@@ -73,16 +72,16 @@ function Player(position, canvas) {
 Player.prototype.update = function(time) {
   // Apply angular velocity
   if(this.steerLeft) {
-    this.angle += time * 0.005;
+    this.angle -= time * 0.005;
   }
   if(this.steerRight) {
-    this.angle -= time * 0.005;
+    this.angle += time * 0.005;
   }
   // Apply acceleration
   if(this.thrusting) {
     var acceleration = {
-      x: Math.sin(this.angle),
-      y: Math.cos(this.angle)
+      x: Math.sin(-this.angle),
+      y: Math.cos(-this.angle)
     }
     this.velocity.x -= acceleration.x / 4;
     this.velocity.y -= acceleration.y / 4;
@@ -97,9 +96,6 @@ Player.prototype.update = function(time) {
   if(this.position.x > this.worldWidth) this.position.x -= this.worldWidth;
   if(this.position.y < 0) this.position.y += this.worldHeight;
   if(this.position.y > this.worldHeight) this.position.y -= this.worldHeight;
-
-  this.color = "#995EEA";
-
 }
 
 /**
@@ -108,21 +104,18 @@ Player.prototype.update = function(time) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 Player.prototype.render = function(time, ctx) {
-  ctx.strokeStyle = this.color;
-  ctx.strokeRect(this.position.x, this.position.y, this.radius, this.radius);
-
   ctx.save();
 
   // Draw player's ship
   ctx.translate(this.position.x, this.position.y);
-  ctx.rotate(-this.angle);
+  ctx.rotate(this.angle);
   ctx.beginPath();
   ctx.moveTo(0, -10);
   ctx.lineTo(-10, 10);
   ctx.lineTo(0, 0);
   ctx.lineTo(10, 10);
   ctx.closePath();
-  ctx.strokeStyle = 'white';
+  ctx.strokeStyle = 'purple';
   ctx.stroke();
 
   // Draw engine thrust
@@ -135,7 +128,24 @@ Player.prototype.render = function(time, ctx) {
     ctx.strokeStyle = 'orange';
     ctx.stroke();
   }
+
   ctx.restore();
+}
 
+/**
+  * @function teleport
+  * Player is teleported to a random spot
+  */
+Player.prototype.teleport = function() {
+  this.velocity.x = 0;
+  this.velocity.y = 0;
+  this.position.x = Math.floor(Math.random() * (740 - 20)) + 20;
+  this.position.y = Math.floor(Math.random() * (460 - 20)) + 20;
+}
 
+Player.prototype.respawn = function() {
+  this.velocity.x = 0;
+  this.velocity.y = 0;
+  this.position.x = this.worldWidth / 2;
+  this.position.y = this.worldHeight / 2;
 }
